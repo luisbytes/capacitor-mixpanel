@@ -14,14 +14,15 @@ public class MixpanelPlugin: CAPPlugin {
         let optOutTrackingByDefault = getConfig().getBoolean("optOutTrackingByDefault", false)
         let trackAutomaticEvents = getConfig().getBoolean("trackAutomaticEvents", true)
         let disableIpCollection = getConfig().getBoolean("disableIosIpCollection", false)
-        let superProperties = getConfig().getObject("superProperties") ?? [:]
+        let rawSuperProps = getConfig().getObject("superProperties") ?? [:]
+        let superProperties = rawSuperProps.compactMapValues { $0 as? MixpanelType }
 
         let instance = Mixpanel.initialize(
             token: token,
             trackAutomaticEvents: trackAutomaticEvents,
             optOutTrackingByDefault: optOutTrackingByDefault,
-            serverURL: serverURL,
-            superProperties: superProperties
+            superProperties: superProperties,
+            serverURL: serverURL
         )
         instance.useIPAddressForGeoLocation = !disableIpCollection
     }
